@@ -1,5 +1,5 @@
 import XCTest
-@testable import LoremIpsum_Swift
+@testable import LoremIpsum
 
 final class LoremIpsum_SwiftTests: XCTestCase {
     func testExample() {
