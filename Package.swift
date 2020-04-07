@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "LoremIpsum-Swift",
+    name: "LoremIpsum",
     platforms: [
         .iOS(.v11),
         .macOS(.v10_12),
