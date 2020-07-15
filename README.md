@@ -11,5 +11,6 @@ The main API is exposed as static method on `String` extension:
 
     import LoremImpsum
     let lorem = String.loremIpsum(paragraphs: 2)
-
-## Randomness
+    
+### UIKit Extensions
+Some UIKit classes implement `Loremable` protocol, so it's possible to call a `UILabel().lorem()` or `lorem(UILabel())`  to automagically fill them with randomness. `UILabel`, `UITextField`, `UITextView` and `UIButton` (even it doesn't make sense with it) are currently supported. 
