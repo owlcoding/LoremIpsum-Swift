@@ -6,7 +6,8 @@ final class LoremIpsum_SwiftTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertTrue(String.loremIpsum(paragraphs: 1).starts(with: "Lorem"))
+        let paragraph = String.Lorem(generate: .paragraph(num: 1, startsWithFirstSentence: true))
+        XCTAssertTrue(paragraph.starts(with: "Lorem ipsum"))
     }
 
     static var allTests = [

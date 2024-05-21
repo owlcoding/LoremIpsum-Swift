@@ -50,13 +50,45 @@ extension Array {
 }
 
 extension String {
-    public class LoremIpsum {
+    public struct LoremIpsum {
         
-        public func word(using rng: inout RandomNumberGeneratorContainer) -> String {
+        public init() {}
+        
+        public enum GeneratorOutput {
+            case word(num: Int)
+            case sentence(num: Int, startsWithFirstSentence: Bool)
+            case paragraph(num: Int, startsWithFirstSentence: Bool)
+        }
+        
+        public static func Lorem(generate output: GeneratorOutput) -> String {
+            let lipsum = LoremIpsum()
+            var generated = ""
+            var rng = RandomNumberGeneratorContainer(rng: SystemRandomNumberGenerator())
+            switch output {
+            case .word(let num):
+                generated = (0..<num).map { _ in lipsum.word(using: &rng) }.joined(separator: " ")
+            case .sentence(let num, let startsWithFirstSentence):
+                var num = num
+                var array = [String]()
+                if startsWithFirstSentence {
+                    array = [lipsum.veryFirstSentence]
+                    num -= 1
+                }
+                array.append(contentsOf: (0..<num).map { _ in lipsum.sentence(using: &rng) })
+                generated = array.joined(separator: ". ")
+            case .paragraph(let num, let startsWithFirstSentence):
+                generated = lipsum.generateParagraphsAsString(numberOfParagraphs: num, includingVeryFirstSentence: startsWithFirstSentence, using: &rng)
+            }
+            
+            return generated
+        }
+
+        
+        private func word(using rng: inout RandomNumberGeneratorContainer) -> String {
             return LoremIpsum.words.randomElement(using: &rng) ?? LoremIpsum.words[0]
         }
         
-        public func sentence(using rng: inout RandomNumberGeneratorContainer) -> String {
+        private func sentence(using rng: inout RandomNumberGeneratorContainer) -> String {
             let length = Int(randomNormalLikeDistributedNumber(mean: 8, std_dev: 4, using: &rng))
             var words: [String] = []
             stride(from: 1, to: length, by: 1).forEach { _ in
@@ -69,11 +101,11 @@ extension String {
             return sentencify(arrayOfWords: commify(arrayOfWords: words, using: &rng))
         }
         
-        public var veryFirstSentence: String {
+        private var veryFirstSentence: String {
             return sentencify(arrayOfWords: LoremIpsum.words.first(number: LoremIpsum.numberOfWordsInVeryFirstSentence))
         }
         
-        public func paragraph(numberOfSentences: Int? = nil, using rng: inout RandomNumberGeneratorContainer) -> String {
+        private func paragraph(numberOfSentences: Int? = nil, using rng: inout RandomNumberGeneratorContainer) -> String {
             var length: Int
             if let l = numberOfSentences {
                 length = l
@@ -86,12 +118,12 @@ extension String {
             
         }
         
-        public func generateParagraphsAsString(numberOfParagraphs: Int, includingVeryFirstSentence: Bool, using rng: inout RandomNumberGeneratorContainer) -> String {
+        private func generateParagraphsAsString(numberOfParagraphs: Int, includingVeryFirstSentence: Bool, using rng: inout RandomNumberGeneratorContainer) -> String {
             return generateParagraphs(numberOfParagraphs: numberOfParagraphs, includingVeryFirstSentence: includingVeryFirstSentence, using: &rng)
                 .joined(separator: "\n\n")
         }
         
-        public func generateParagraphs(numberOfParagraphs: Int, includingVeryFirstSentence: Bool, using rng: inout RandomNumberGeneratorContainer) -> [String] {
+        private func generateParagraphs(numberOfParagraphs: Int, includingVeryFirstSentence: Bool, using rng: inout RandomNumberGeneratorContainer) -> [String] {
             guard numberOfParagraphs > 0 else { return [] }
             return stride(from: 1, through: numberOfParagraphs, by: 1).map { idx in
                 var par = paragraph(using: &rng)
@@ -168,19 +200,28 @@ extension String {
             "torquent", "tortor", "tristique", "turpis", "ullamcorper", "ultrices",
             "ultricies", "urna", "ut", "varius", "vehicula", "vel", "velit",
             "venenatis", "vestibulum", "vitae", "vivamus", "viverra", "volutpat",
-            "vulputate",
+            "vulputate"
         ]
+        
+        public var longestWordLength: Int {
+            Self.words.sorted(using: KeyPathComparator(\.count, order: .forward)).last?.count ?? 0
+        }
+        
+        public func wordsLengthDistribution() -> [Int: Int] {
+            let sorted = Self.words.sorted(using: KeyPathComparator(\.count, order: .forward))
+            return sorted.reduce([Int:Int]()) { part, new in
+                var part = part
+                if let num = part[new.count] {
+                    part[new.count] = num + 1
+                } else {
+                    part[new.count] = 1
+                }
+                return part
+            }
+        }
     }
     
-    public static func loremIpsum(paragraphs: Int,
-                                  using rng: inout RandomNumberGeneratorContainer
-        ) -> String {
-        return LoremIpsum().generateParagraphsAsString(numberOfParagraphs: paragraphs, includingVeryFirstSentence: true, using: &rng)
-    }
-    
-    public static func loremIpsum(paragraphs: Int) -> String {
-        var srng = RandomNumberGeneratorContainer(rng: SystemRandomNumberGenerator())
-        return loremIpsum(paragraphs: paragraphs,
-                          using: &srng)
+    public static func Lorem(generate output: LoremIpsum.GeneratorOutput) -> String {
+        LoremIpsum.Lorem(generate: output)
     }
 }
