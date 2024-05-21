@@ -29,26 +29,27 @@ import UIKit
 
 extension UILabel: Loremable {
     public func lorem() {
-        self.text = .loremIpsum(paragraphs: 1)
-        self.attributedText = NSAttributedString(string: .loremIpsum(paragraphs: 1))
+        let paragraph = String.Lorem(generate: .paragraph(num: 1, startsWithFirstSentence: true))
+        self.text = paragraph
+        self.attributedText = NSAttributedString(string: paragraph)
     }
 }
 
 extension UITextField: Loremable {
     public func lorem() {
-        self.text = .loremIpsum(paragraphs: 1)
+        self.text = String.Lorem(generate: .sentence(num: 1, startsWithFirstSentence: false))
     }
 }
 
 extension UITextView: Loremable {
     public func lorem() {
-        self.text = .loremIpsum(paragraphs: 3)
+        self.text = String.Lorem(generate: .paragraph(num: 3, startsWithFirstSentence: true))
     }
 }
 
 extension UIButton: Loremable {
     public func lorem() {
-        setTitle(.loremIpsum(paragraphs: 1), for: .normal)
+        setTitle(String.Lorem(generate: .sentence(num: 1, startsWithFirstSentence: false)), for: .normal)
     }
 }
 
@@ -57,3 +58,4 @@ public func lorem<T: Loremable>(_ uikitElement: T) {
 }
 
 #endif
+
