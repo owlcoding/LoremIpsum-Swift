@@ -22,31 +22,27 @@
 
 import Foundation
 
-public struct RandomNumberGeneratorContainer: RandomNumberGenerator {
-    var rng: RandomNumberGenerator
-    
-    public init(rng: RandomNumberGenerator) {
-        self.rng = rng
-    }
-    
-    mutating public func next() -> UInt64 {
-        return self.rng.next()
-    }
-}
-
-extension Array {
-    func last(number: Int) -> Array {
-        var a = self
-        let result = (0..<number).compactMap { _ in return a.popLast() }
-        return result.reversed()
-    }
-    
-    func first(number: Int) -> Array {
-        return self
-            .enumerated()
-            .filter { idx, _ in return idx < number }
-            .compactMap { return $0.element }
-    }
+///
+/// Protocol `LoremStats` gives access to some statistical data
+/// you can get the longest word as well as the distribution of available
+/// words length
+///
+public protocol LoremStats {
+    /// - Returns: a length of the longest word avalable to the generator
+    var longestWordLength: Int { get }
+    /// - Returns: a dictionary of `word length` vs `number of time this length appears in the word pool`.
+    ///
+    ///  For example:
+    ///  Given an array of available words:
+    ///
+    ///      ["a", "b", "c", "abcd", "def", "abc"]
+    ///
+    /// The result of this funciton should give:
+    ///
+    ///     [1: 3, 3: 2, 4: 1]
+    ///
+    /// So we see 1-letter word 3 times, 3-letter word 2 times and 4-letter word once.
+    func wordsLengthDistribution() -> [Int: Int]
 }
 
 extension String {
@@ -202,26 +198,54 @@ extension String {
             "venenatis", "vestibulum", "vitae", "vivamus", "viverra", "volutpat",
             "vulputate"
         ]
-        
-        public var longestWordLength: Int {
-            Self.words.sorted(using: KeyPathComparator(\.count, order: .forward)).last?.count ?? 0
-        }
-        
-        public func wordsLengthDistribution() -> [Int: Int] {
-            let sorted = Self.words.sorted(using: KeyPathComparator(\.count, order: .forward))
-            return sorted.reduce([Int:Int]()) { part, new in
-                var part = part
-                if let num = part[new.count] {
-                    part[new.count] = num + 1
-                } else {
-                    part[new.count] = 1
-                }
-                return part
-            }
-        }
     }
     
     public static func Lorem(generate output: LoremIpsum.GeneratorOutput) -> String {
         LoremIpsum.Lorem(generate: output)
+    }
+}
+
+extension String.LoremIpsum: LoremStats {
+    public var longestWordLength: Int {
+        Self.words.map(\.count).max() ?? 0
+    }
+    
+    public func wordsLengthDistribution() -> [Int: Int] {
+        return Self.words.reduce([Int:Int]()) { part, new in
+            var part = part
+            if let num = part[new.count] {
+                part[new.count] = num + 1
+            } else {
+                part[new.count] = 1
+            }
+            return part
+        }
+    }
+}
+
+public struct RandomNumberGeneratorContainer: RandomNumberGenerator {
+    var rng: RandomNumberGenerator
+    
+    public init(rng: RandomNumberGenerator) {
+        self.rng = rng
+    }
+    
+    mutating public func next() -> UInt64 {
+        return self.rng.next()
+    }
+}
+
+extension Array {
+    func last(number: Int) -> Array {
+        var a = self
+        let result = (0..<number).compactMap { _ in return a.popLast() }
+        return result.reversed()
+    }
+    
+    func first(number: Int) -> Array {
+        return self
+            .enumerated()
+            .filter { idx, _ in return idx < number }
+            .compactMap { return $0.element }
     }
 }
