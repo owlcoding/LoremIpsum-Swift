@@ -24,7 +24,7 @@ public protocol Loremable {
     func lorem()
 }
 
-#if !os(macOS)
+#if canImport(UIKit)
 import UIKit
 
 extension UILabel: Loremable {

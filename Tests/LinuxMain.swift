@@ -1,7 +1,7 @@
 import XCTest
 
-import LoremIpsum_SwiftTests
+import LoremIpsum_Tests
 
 var tests = [XCTestCaseEntry]()
-tests += LoremIpsum_SwiftTests.allTests()
+tests += LoremIpsum_Tests.allTests()
 XCTMain(tests)
