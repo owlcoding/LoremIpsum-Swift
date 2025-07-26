@@ -1,10 +1,10 @@
 # LoremIpsum-Swift
 LoremIpsum String generator for Swift
 
-## Instalation
+## Installation
 
 ### Swift Package Manager
-Add the following package to your dependecies: `https://github.com/owlcoding/LoremIpsum-Swift/`
+Add the following package to your dependencies: `https://github.com/owlcoding/LoremIpsum-Swift/`
 
 ## How does it work? 
 The main API is exposed as static method on `String` extension:
