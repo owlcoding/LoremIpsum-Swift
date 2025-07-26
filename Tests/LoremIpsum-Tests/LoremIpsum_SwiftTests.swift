@@ -10,7 +10,16 @@ final class LoremIpsum_SwiftTests: XCTestCase {
         XCTAssertTrue(paragraph.starts(with: "Lorem ipsum"))
     }
 
+    func testLongestWordLengthMatchesDistributionMax() {
+        let lipsum = String.LoremIpsum()
+        let longest = lipsum.longestWordLength
+        let distMax = lipsum.wordsLengthDistribution().keys.max()
+        XCTAssertNotNil(distMax)
+        XCTAssertEqual(longest, distMax!)
+    }
+
     static var allTests = [
         ("testExample", testExample),
+        ("testLongestWordLengthMatchesDistributionMax", testLongestWordLengthMatchesDistributionMax),
     ]
 }
