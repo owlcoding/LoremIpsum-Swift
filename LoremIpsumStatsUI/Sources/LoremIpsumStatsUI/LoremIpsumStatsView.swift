@@ -2,7 +2,7 @@ import SwiftUI
 
 import LoremIpsum
 
-/// Here we demonstrate how often words of each length occur in the datrabase
+/// Here we demonstrate how often words of each length occur in the database
 class StatsModel {
     
     struct Stat: Identifiable, Hashable {
