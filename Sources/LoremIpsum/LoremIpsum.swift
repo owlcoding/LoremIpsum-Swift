@@ -158,8 +158,8 @@ extension String {
         
         private func randomNormalLikeDistributedNumber(mean: Double, std_dev: Double, using rng: inout RandomNumberGeneratorContainer) -> Double
         {
-            let x = Double.random(in: ClosedRange(uncheckedBounds: (0, 1)), using: &rng)
-            let y = Double.random(in: ClosedRange(uncheckedBounds: (0, 1)), using: &rng)
+            let x = Double.random(in: 0..<1, using: &rng)
+            let y = Double.random(in: 0..<1, using: &rng)
             let z = sqrt(-2 * log(x)) * cos(2 * Double.pi * y)
             return z * std_dev + mean
         }
